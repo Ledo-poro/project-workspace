@@ -4,14 +4,16 @@ A lightweight project-management app for organizing projects and their next step
 
 ## Features
 
+- Use separate Overview, Projects, and My Tasks views; the overview keeps concise project and task previews.
+- Switch between light and dark themes; the selected theme is remembered in the browser.
 - Create projects with descriptions, statuses, and target dates.
 - Add tasks to projects with priority, assignee, and due date.
 - Edit or delete projects and tasks, with confirmation before deleting.
 - Mark tasks complete and review progress in the dashboard.
-- Filter and search projects and open tasks.
+- Filter and search projects and tasks, including done and cancelled tasks.
 - Track task counts, completed work, and blocked work.
 - Save data locally in SQLite across restarts.
-- Manage project members, milestones, task dependencies, labels, comments, time entries, attachments, and activity records in the database schema.
+- The database schema includes tables for members, milestones, dependencies, labels, comments, time entries, attachments, and activity records. These records do not currently have management screens or API routes.
 
 ## Requirements
 
@@ -57,23 +59,30 @@ python app.py
 
 ```text
 .
-├── app.py                 # Local HTTP server and JSON API
+├── app.py                 # Application entry point
+├── http_handler.py        # HTTP routes and JSON/static responses
+├── workspace_service.py   # Workspace queries and project/task operations
 ├── project.py             # SQLite schema and connection helpers
 ├── static/
-│   ├── app.js             # Dashboard behavior
+│   ├── app.js             # Browser app entry point
+│   ├── api.js             # JSON request helper
+│   ├── events.js          # UI event handlers
+│   ├── render.js          # Metrics, lists, and form options
+│   ├── ui.js              # Dialogs, navigation, theme, and toasts
+│   ├── utils.js           # Shared display helpers
 │   ├── index.html         # App page
-│   └── styles.css         # Responsive styles
+│   └── styles.css         # Responsive and theme styles
 ├── README.md
 └── .gitignore
 ```
 
 ## API
 
-- `GET /api/overview` returns projects, open tasks, workspace counts, and members.
+- `GET /api/overview` returns all projects, tasks of every status, workspace counts, and active members. Tasks are ordered with open work first; including completed and cancelled tasks supports those filters in the browser.
 - `POST /api/projects` creates a project.
 - `POST /api/tasks` creates a task.
-- `PATCH /api/tasks/{id}` updates a task's title, details, project, status, priority, assignee, or due date.
-- `PATCH /api/projects/{id}` edits a project.
+- `PATCH /api/tasks/{id}` updates a task's title, description, project, status, priority, assignee, or due date.
+- `PATCH /api/projects/{id}` updates a project's name, description, status, start date, or due date.
 - `DELETE /api/tasks/{id}` deletes a task and its related records.
 - `DELETE /api/projects/{id}` deletes a project and its tasks and related records.
 
