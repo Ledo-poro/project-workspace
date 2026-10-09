@@ -1,4 +1,4 @@
-<!doctype html>
+  <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -44,9 +44,9 @@
       </div>
     </aside>
 
-    <main class="main-area" id="overview">
+    <main class="main-area" id="main-content">
       <header class="topbar">
-        <div class="breadcrumbs"><span>Workspace</span><span class="crumb-slash">/</span><strong>Overview</strong></div>
+        <div class="breadcrumbs"><span>Workspace</span><span class="crumb-slash">/</span><strong id="current-view-label">Overview</strong></div>
         <div class="topbar-actions">
           <label class="search-box" for="global-search">
             <span class="search-icon" aria-hidden="true"></span>
@@ -54,6 +54,7 @@
             <kbd>/</kbd>
           </label>
           <span class="topbar-divider"></span>
+          <button class="icon-button theme-toggle" type="button" id="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode"><span class="theme-icon" aria-hidden="true"></span></button>
           <button class="icon-button notification-button" type="button" aria-label="Notifications" title="Notifications">
             <span class="bell-icon" aria-hidden="true"></span><i></i>
           </button>
@@ -62,6 +63,7 @@
       </header>
 
       <div class="page-content">
+        <section class="page-view" id="overview-view" data-page-view="overview">
         <section class="page-intro">
           <div>
             <div class="eyebrow"><span class="eyebrow-line"></span><span id="today-label">YOUR WORKSPACE</span></div>
@@ -98,29 +100,29 @@
         </section>
 
         <div class="content-grid">
-          <section class="panel project-panel" id="projects">
+          <section class="panel project-panel" id="projects-preview">
             <div class="panel-heading">
               <div>
                 <div class="section-kicker">THE BIG PICTURE</div>
                 <h2>Projects <span class="heading-count" id="project-heading-count">0</span></h2>
               </div>
-              <button class="text-button" type="button" id="project-view-button">View all <span aria-hidden="true">↗</span></button>
+              <button class="text-button" type="button" data-navigate-view="projects">View all <span aria-hidden="true">↗</span></button>
             </div>
-            <div class="filter-row" role="group" aria-label="Filter projects">
+            <div class="filter-row preview-filters" role="group" aria-label="Filter projects">
               <button class="filter-chip selected" type="button" data-project-filter="all">All projects</button>
               <button class="filter-chip" type="button" data-project-filter="active">In progress</button>
               <button class="filter-chip" type="button" data-project-filter="planned">Planned</button>
             </div>
-            <div class="project-list" id="project-list" aria-live="polite"></div>
+            <div class="project-list" id="project-preview-list" data-list-view="overview" aria-live="polite"></div>
           </section>
 
-          <section class="panel focus-panel" id="tasks">
+          <section class="panel focus-panel" id="tasks-preview">
             <div class="panel-heading focus-heading">
               <div>
                 <div class="section-kicker">KEEP THE MOMENTUM</div>
                 <h2>Up next <span class="heading-count" id="task-heading-count">0</span></h2>
               </div>
-              <button class="round-add" type="button" id="open-task-quick" aria-label="Add a task" title="Add a task">+</button>
+              <div class="heading-actions"><button class="text-button" type="button" data-navigate-view="tasks">View all <span aria-hidden="true">↗</span></button><button class="round-add" type="button" id="open-task-quick" aria-label="Add a task" title="Add a task">+</button></div>
             </div>
             <div class="task-filters" role="group" aria-label="Filter tasks">
               <button class="task-filter selected" type="button" data-task-filter="all">All</button>
@@ -129,10 +131,46 @@
               <button class="task-filter" type="button" data-task-filter="done">Done</button>
               <button class="task-filter" type="button" data-task-filter="cancelled">Cancelled</button>
             </div>
-            <div class="task-list" id="task-list" aria-live="polite"></div>
+            <div class="task-list" id="task-preview-list" data-list-view="overview" aria-live="polite"></div>
             <div class="task-list-footer"><span id="task-footer-copy">Your next steps, all in one place.</span><span class="footer-spark" aria-hidden="true">✳</span></div>
           </section>
         </div>
+        </section>
+
+        <section class="page-view" id="projects-view" data-page-view="projects" hidden>
+          <section class="page-intro dedicated-intro">
+            <div><div class="eyebrow"><span class="eyebrow-line"></span>WORKSPACE</div><h1>Projects</h1><p class="intro-copy">Every initiative, with its progress and next steps.</p></div>
+            <button class="button button-primary" type="button" data-open-project><span class="plus-symbol">+</span> New project</button>
+          </section>
+          <section class="panel project-panel full-list-panel">
+            <div class="panel-heading"><div><div class="section-kicker">YOUR PORTFOLIO</div><h2>All projects <span class="heading-count" id="project-page-count">0</span></h2></div></div>
+            <div class="filter-row" role="group" aria-label="Filter projects">
+              <button class="filter-chip selected" type="button" data-project-filter="all">All projects</button>
+              <button class="filter-chip" type="button" data-project-filter="active">In progress</button>
+              <button class="filter-chip" type="button" data-project-filter="planned">Planned</button>
+            </div>
+            <div class="project-list" id="project-list" data-list-view="projects" aria-live="polite"></div>
+          </section>
+        </section>
+
+        <section class="page-view" id="tasks-view" data-page-view="tasks" hidden>
+          <section class="page-intro dedicated-intro">
+            <div><div class="eyebrow"><span class="eyebrow-line"></span>YOUR WORK</div><h1>My tasks</h1><p class="intro-copy">Keep the next steps moving, one task at a time.</p></div>
+            <button class="button button-primary" type="button" id="tasks-page-add"><span class="plus-symbol">+</span> Add task</button>
+          </section>
+          <section class="panel focus-panel full-list-panel">
+            <div class="panel-heading focus-heading"><div><div class="section-kicker">TASK LIST</div><h2>All tasks <span class="heading-count" id="task-page-count">0</span></h2></div></div>
+            <div class="task-filters" role="group" aria-label="Filter tasks">
+              <button class="task-filter selected" type="button" data-task-filter="all">Open</button>
+              <button class="task-filter" type="button" data-task-filter="urgent">Priority</button>
+              <button class="task-filter" type="button" data-task-filter="blocked">Blocked</button>
+              <button class="task-filter" type="button" data-task-filter="done">Done</button>
+              <button class="task-filter" type="button" data-task-filter="cancelled">Cancelled</button>
+            </div>
+            <div class="task-list" id="task-list" data-list-view="tasks" aria-live="polite"></div>
+            <div class="task-list-footer"><span id="task-page-footer-copy">Your next steps, all in one place.</span><span class="footer-spark" aria-hidden="true">✳</span></div>
+          </section>
+        </section>
 
         <footer class="page-footer"><span>STUDIO NORTH</span><span>Make room for good work.</span></footer>
       </div>
@@ -182,6 +220,6 @@
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="/static/app.js" defer></script>
+  <script src="/static/app.js" type="module"></script>
 </body>
 </html>
