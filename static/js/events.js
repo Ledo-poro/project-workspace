@@ -202,10 +202,31 @@ export function registerEvents(context) {
     renderTasks();
   });
 
-  document.querySelectorAll(".tab-link").forEach((link) => {
-    link.addEventListener("click", (event) => {
-      event.preventDefault();
-      showView(link.dataset.view);
+  document.querySelectorAll("[data-metric-filter]").forEach((card) => {
+    card.addEventListener("click", () => {
+      const filter = card.dataset.metricFilter;
+      if (filter === "active") {
+        showView("projects");
+        state.projectFilter = "active";
+        syncFilterButtons(PROJECT_FILTER_SELECTOR, "active", "projectFilter");
+        renderProjects();
+      } else if (filter === "blocked") {
+        showView("tasks");
+        state.taskFilter = "blocked";
+        syncFilterButtons(TASK_FILTER_SELECTOR, "blocked", "taskFilter");
+        renderTasks();
+      } else if (filter === "done") {
+        showView("tasks");
+        state.taskFilter = "done";
+        syncFilterButtons(TASK_FILTER_SELECTOR, "done", "taskFilter");
+        renderTasks();
+      } else if (filter === "due_soon") {
+        showView("tasks");
+        state.taskFilter = "all";
+        syncFilterButtons(TASK_FILTER_SELECTOR, "all", "taskFilter");
+        elements.search.value = "";
+        renderTasks();
+      }
     });
   });
   document.querySelectorAll("[data-navigate-view]").forEach((button) => {

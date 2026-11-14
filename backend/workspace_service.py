@@ -86,7 +86,8 @@ def dashboard_data() -> dict[str, object]:
             """SELECT COUNT(DISTINCT p.id) AS projects,
                       COALESCE(SUM(CASE WHEN t.status NOT IN ('done', 'cancelled') THEN 1 ELSE 0 END), 0) AS open_tasks,
                       COALESCE(SUM(CASE WHEN t.status = 'done' THEN 1 ELSE 0 END), 0) AS completed_tasks,
-                      COALESCE(SUM(CASE WHEN t.status = 'blocked' THEN 1 ELSE 0 END), 0) AS blocked_tasks
+                      COALESCE(SUM(CASE WHEN t.status = 'blocked' THEN 1 ELSE 0 END), 0) AS blocked_tasks,
+                      COALESCE(SUM(CASE WHEN t.status NOT IN ('done', 'cancelled') AND t.due_date IS NOT NULL AND t.due_date <= date('now', '+7 days') THEN 1 ELSE 0 END), 0) AS due_soon_tasks
                FROM projects p LEFT JOIN tasks t ON t.project_id = p.id"""
         ).fetchone()
         members = [dict(row) for row in connection.execute(

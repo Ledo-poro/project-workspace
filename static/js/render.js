@@ -25,7 +25,7 @@ function animateCounters() {
 export function renderMetrics(workspace) {
   const activeProjects = workspace.projects.filter((item) => item.status === "active").length;
   document.querySelector("#metric-projects").textContent = activeProjects;
-  document.querySelector("#metric-open").textContent = workspace.counts.open_tasks || 0;
+  document.querySelector("#metric-due-soon").textContent = workspace.counts.due_soon_tasks || 0;
   document.querySelector("#metric-done").textContent = workspace.counts.completed_tasks || 0;
   document.querySelector("#metric-blocked").textContent = workspace.counts.blocked_tasks || 0;
   document.querySelector("#metric-project-caption").textContent = activeProjects
@@ -41,12 +41,12 @@ export function renderMetrics(workspace) {
   requestAnimationFrame(() => animateCounters());
 }
 
-function projectEmptyState(hasProjects) {
-  const title = hasProjects ? "No projects in this view" : "Start your first project";
-  const description = hasProjects
-    ? "Try clearing filters or search queries."
-    : "Create a home for your next initiative, app, or release.";
-  const action = hasProjects
+function projectEmptyState(hasProjects, hasSearchOrFilter = false) {
+  const title = hasProjects && hasSearchOrFilter ? "No matching projects found" : "You have no projects yet";
+  const description = hasProjects && hasSearchOrFilter
+    ? "No projects match your current filter or search query. Try clearing filters or searching for something else."
+    : "Create your first project to start tracking work, milestones, and tasks.";
+  const action = hasProjects && hasSearchOrFilter
     ? ""
     : '<button class="button button-primary" type="button" data-open-project>Create Project</button>';
   return `<div class="empty-state"><span class="empty-icon">📂</span><strong>${title}</strong><p>${description}</p>${action}</div>`;
@@ -75,9 +75,9 @@ function projectRow(item, index) {
     </article>`;
 }
 
-function renderProjectList(list, projects, hasProjects) {
+function renderProjectList(list, projects, hasProjects, hasSearchOrFilter) {
   if (!projects.length) {
-    list.innerHTML = projectEmptyState(hasProjects);
+    list.innerHTML = projectEmptyState(hasProjects, hasSearchOrFilter);
     return;
   }
   list.innerHTML = projects.map(projectRow).join("");
@@ -85,6 +85,7 @@ function renderProjectList(list, projects, hasProjects) {
 
 export function renderProjects(workspace, projectFilter, search, projectLists) {
   const normalizedSearch = search.trim().toLowerCase();
+  const hasSearchOrFilter = projectFilter !== "all" || normalizedSearch !== "";
   const projects = workspace.projects.filter((item) => {
     const matchesFilter = projectFilter === "all" || item.status === projectFilter;
     const matchesSearch = !normalizedSearch
@@ -94,18 +95,38 @@ export function renderProjects(workspace, projectFilter, search, projectLists) {
 
   projectLists.forEach((list) => {
     const visibleProjects = list.dataset.listView === "overview" ? projects.slice(0, 3) : projects;
-    renderProjectList(list, visibleProjects, workspace.projects.length > 0);
+    renderProjectList(list, visibleProjects, workspace.projects.length > 0, hasSearchOrFilter);
   });
 }
 
-function taskEmptyState(hasProjects) {
-  const title = hasProjects ? "All caught up" : "No tasks in the queue";
-  const description = hasProjects
-    ? "No tasks match your current filter."
-    : "Create a project and add tasks to get moving.";
-  const action = hasProjects
-    ? '<button class="button button-secondary" type="button" data-open-task>Add Task</button>'
-    : "";
+function taskEmptyState(hasProjects, taskFilter, hasSearch) {
+  let title = "No tasks in the queue";
+  let description = "Create a project and add tasks to get moving.";
+  let action = "";
+
+  if (!hasProjects) {
+    title = "No tasks in the queue";
+    description = "Create a project first, then add tasks to start tracking work.";
+  } else if (hasSearch) {
+    title = "No tasks match your search";
+    description = "No tasks match your search query. Try a different keyword or clear filters.";
+  } else if (taskFilter === "urgent") {
+    title = "No urgent tasks right now";
+    description = "You're all clear on urgent work. Great job staying ahead!";
+  } else if (taskFilter === "blocked") {
+    title = "No blocked tasks";
+    description = "All tasks are flowing smoothly with no roadblocks.";
+  } else if (taskFilter === "done") {
+    title = "No completed tasks yet";
+    description = "Mark tasks as complete as you finish them to see them here.";
+  } else if (taskFilter === "cancelled") {
+    title = "No cancelled tasks";
+    description = "Cancelled tasks will appear here if any are dropped.";
+  } else {
+    title = "All caught up";
+    description = "No open tasks match your current filter.";
+    action = '<button class="button button-secondary" type="button" data-open-task>Add Task</button>';
+  }
   return `<div class="empty-state"><span class="empty-icon">✨</span><strong>${title}</strong><p>${description}</p>${action}</div>`;
 }
 
@@ -117,14 +138,27 @@ function taskRow(task, index, today) {
     : "–";
   const priority = task.priority[0].toUpperCase() + task.priority.slice(1);
   const dueLabel = due ? `${overdue ? "Late · " : "Due "}${escapeHtml(formattedDate(task.due_date))}` : "";
+  const isDoneOrCancelled = ["done", "cancelled"].includes(task.status);
   return `<article class="task-row">
       <button class="task-check" type="button" data-complete-task="${task.id}" aria-label="Mark complete" title="Mark complete"></button>
-      <div class="task-copy"><strong class="task-title" title="${escapeHtml(task.title)}">${escapeHtml(task.title)}</strong><div class="task-meta"><span class="task-project">${escapeHtml(task.project_name)}</span><span>·</span><span class="task-priority ${escapeHtml(task.priority)}">${escapeHtml(priority)}</span></div></div>
+      <div class="task-info">
+        <strong class="task-title" title="${escapeHtml(task.title)}">${escapeHtml(task.title)}</strong>
+        <span class="task-project" title="${escapeHtml(task.project_name)}">${escapeHtml(task.project_name)}</span>
+      </div>
+      <div class="task-badges">
+        <span class="task-status-badge ${escapeHtml(task.status)}">${escapeHtml(statusLabel(task.status))}</span>
+        <span class="task-priority-badge ${escapeHtml(task.priority)}">${escapeHtml(priority)}</span>
+      </div>
       <div class="task-side">
-        <span class="task-date ${overdue ? "overdue" : ""}">${dueLabel}</span>
+        ${due ? `<span class="task-date-chip ${overdue ? "overdue" : ""}">${dueLabel}</span>` : ""}
         <span class="task-assignee" title="${escapeHtml(task.assignee_name || "Unassigned")}">${escapeHtml(initials)}</span>
       </div>
       <div class="row-actions">
+        ${!isDoneOrCancelled ? `
+        <button class="row-action-btn complete-btn" type="button" data-complete-task="${task.id}" title="Complete task">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Complete
+        </button>` : ""}
         <button class="row-action-btn edit-btn" type="button" data-edit-task="${task.id}" title="Edit task">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
           Edit
@@ -137,9 +171,9 @@ function taskRow(task, index, today) {
     </article>`;
 }
 
-function renderTaskList(list, tasks, hasProjects) {
+function renderTaskList(list, tasks, hasProjects, taskFilter, hasSearch) {
   if (!tasks.length) {
-    list.innerHTML = taskEmptyState(hasProjects);
+    list.innerHTML = taskEmptyState(hasProjects, taskFilter, hasSearch);
     return;
   }
   const today = new Date();
@@ -163,7 +197,7 @@ export function renderTasks(workspace, taskFilter, search, taskLists) {
 
   taskLists.forEach((list) => {
     const visibleTasks = list.dataset.listView === "overview" ? tasks.slice(0, 4) : tasks;
-    renderTaskList(list, visibleTasks, workspace.projects.length > 0);
+    renderTaskList(list, visibleTasks, workspace.projects.length > 0, taskFilter, normalizedSearch !== "");
   });
 }
 

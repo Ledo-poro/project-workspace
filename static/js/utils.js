@@ -11,11 +11,17 @@ export function formattedDate(value) {
 
 export function statusLabel(value) {
   const labels = {
-    active: "In progress",
+    active: "Active",
     planned: "Planned",
     on_hold: "On hold",
     completed: "Completed",
     archived: "Archived",
+    todo: "To do",
+    backlog: "Backlog",
+    in_progress: "In progress",
+    blocked: "Blocked",
+    done: "Done",
+    cancelled: "Cancelled",
   };
   return labels[value] || value;
 }
