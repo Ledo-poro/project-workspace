@@ -3,7 +3,11 @@
 from __future__ import annotations
 
 import os
+import sys
 from http.server import ThreadingHTTPServer
+
+# Add backend directory to path for clean modular imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "backend")))
 
 import project
 import workspace_service

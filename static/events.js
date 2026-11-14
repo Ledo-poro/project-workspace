@@ -72,7 +72,7 @@ async function submitProject(context, event) {
     state.projectFilter = "all";
     syncFilterButtons(PROJECT_FILTER_SELECTOR, "all", "projectFilter");
     await loadWorkspace();
-    showToast(isEditing ? "Project changes saved." : "Project created. Let’s get to it.");
+    showToast(isEditing ? "Project changes saved." : "Project created successfully.");
   } catch (submitError) {
     error.textContent = submitError.message;
   }
@@ -94,7 +94,7 @@ async function submitTask(context, event) {
     elements.taskDialog.close();
     state.editingTaskId = null;
     await loadWorkspace();
-    showToast(isEditing ? "Task changes saved." : "Task added to your list.");
+    showToast(isEditing ? "Task changes saved." : "Task added to queue.");
   } catch (submitError) {
     error.textContent = submitError.message;
   }
@@ -111,11 +111,11 @@ function registerProjectActions(context) {
     const deleteButton = event.target.closest("[data-delete-project]");
     if (!deleteButton) return;
     const project = state.workspace.projects.find((item) => item.id === Number(deleteButton.dataset.deleteProject));
-    if (!project || !window.confirm(`Delete “${project.name}” and all of its tasks and related records? This cannot be undone.`)) return;
+    if (!project || !window.confirm(`Delete “${project.name}” and all tasks?`)) return;
     try {
       await request(`/api/projects/${project.id}`, { method: "DELETE" });
       await loadWorkspace();
-      showToast("Project and its tasks deleted.");
+      showToast("Project deleted.");
     } catch (error) {
       showToast(error.message);
     }
@@ -133,7 +133,7 @@ function registerTaskActions(context) {
     const deleteButton = event.target.closest("[data-delete-task]");
     if (deleteButton) {
       const task = state.workspace.tasks.find((item) => item.id === Number(deleteButton.dataset.deleteTask));
-      if (!task || !window.confirm(`Delete “${task.title}”? This also removes subtasks, comments, time entries, attachments, labels, and dependencies.`)) return;
+      if (!task || !window.confirm(`Delete “${task.title}”?`)) return;
       try {
         await request(`/api/tasks/${task.id}`, { method: "DELETE" });
         await loadWorkspace();
@@ -152,7 +152,7 @@ function registerTaskActions(context) {
         body: JSON.stringify({ status: "done" }),
       });
       await loadWorkspace();
-      showToast("Nice work. Task completed.");
+      showToast("Task marked completed.");
     } catch (error) {
       completeButton.disabled = false;
       showToast(error.message);
@@ -202,7 +202,7 @@ export function registerEvents(context) {
     renderTasks();
   });
 
-  document.querySelectorAll(".nav-link").forEach((link) => {
+  document.querySelectorAll(".tab-link").forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       showView(link.dataset.view);

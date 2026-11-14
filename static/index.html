@@ -1,221 +1,258 @@
-  <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f4f5f2">
+  <meta name="theme-color" content="#0b0f17">
   <title>Studio | Project workspace</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/styles.css">
 </head>
 <body>
   <div class="app-shell">
-    <aside class="sidebar" aria-label="Main navigation">
-      <a class="brand" href="/" aria-label="Studio workspace home">
-        <span class="brand-mark"><span></span><span></span><span></span></span>
-        <span class="brand-name">studio<span class="brand-period">.</span></span>
-      </a>
-
-      <div class="workspace-switcher">
-        <span class="workspace-avatar">S</span>
-        <span class="workspace-label"><strong>Studio North</strong><small>Workspace</small></span>
-        <span class="switcher-chevron" aria-hidden="true">⌄</span>
+    <!-- Tabbed Header & Navigation Bar -->
+    <header class="app-header">
+      <div class="header-left">
+        <a class="brand" href="/" aria-label="Studio workspace home">
+          <span class="brand-mark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+          <span class="brand-name">studio<span class="brand-period">.</span></span>
+        </a>
+        <div class="workspace-pill">
+          <span class="pill-dot"></span>
+          <span>Studio North</span>
+        </div>
       </div>
 
-      <div class="nav-caption">WORKSPACE</div>
-      <nav class="primary-nav">
-        <a class="nav-link active" href="#overview" data-view="overview"><span class="nav-icon overview-icon"></span>Overview</a>
-        <a class="nav-link" href="#projects" data-view="projects"><span class="nav-icon projects-icon"></span>Projects<span class="nav-count" id="nav-project-count">0</span></a>
-        <a class="nav-link" href="#tasks" data-view="tasks"><span class="nav-icon tasks-icon"></span>My tasks<span class="nav-count" id="nav-task-count">0</span></a>
+      <!-- Tabbed Navigation Grid -->
+      <nav class="tab-nav" aria-label="Workspace views">
+        <a class="tab-link active" href="#overview" data-view="overview">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Overview
+        </a>
+        <a class="tab-link" href="#projects" data-view="projects">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          Projects
+          <span class="tab-badge" id="nav-project-count">0</span>
+        </a>
+        <a class="tab-link" href="#tasks" data-view="tasks">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          My Tasks
+          <span class="tab-badge" id="nav-task-count">0</span>
+        </a>
       </nav>
 
-      <div class="sidebar-bottom">
-        <div class="sidebar-note">
-          <span class="note-mark">✳</span>
-          <div><strong>Small steps,</strong><br>great work.</div>
-        </div>
-        <div class="profile-row">
-          <span class="profile-avatar">W</span>
-          <span class="profile-copy"><strong>Workspace Admin</strong><small>Local workspace</small></span>
-          <span class="profile-menu" aria-hidden="true">···</span>
-        </div>
+      <div class="header-right">
+        <label class="search-box" for="global-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="global-search" type="search" placeholder="Search workspace..." autocomplete="off">
+          <kbd>/</kbd>
+        </label>
+        <button class="icon-button theme-toggle" type="button" id="theme-toggle" aria-label="Toggle theme" title="Toggle theme">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72l1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        </button>
+        <div class="user-avatar-badge" title="Workspace Admin">WA</div>
       </div>
-    </aside>
+    </header>
 
-    <main class="main-area" id="main-content">
-      <header class="topbar">
-        <div class="breadcrumbs"><span>Workspace</span><span class="crumb-slash">/</span><strong id="current-view-label">Overview</strong></div>
-        <div class="topbar-actions">
-          <label class="search-box" for="global-search">
-            <span class="search-icon" aria-hidden="true"></span>
-            <input id="global-search" type="search" placeholder="Search tasks and projects" autocomplete="off">
-            <kbd>/</kbd>
-          </label>
-          <span class="topbar-divider"></span>
-          <button class="icon-button theme-toggle" type="button" id="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode"><span class="theme-icon" aria-hidden="true"></span></button>
-          <button class="icon-button notification-button" type="button" aria-label="Notifications" title="Notifications">
-            <span class="bell-icon" aria-hidden="true"></span><i></i>
-          </button>
-          <span class="top-avatar">W</span>
-        </div>
-      </header>
+    <main class="main-workspace" id="main-content">
+      <div class="workspace-error" id="workspace-error" role="alert" aria-live="assertive" hidden></div>
 
-      <div class="page-content">
-        <section class="page-view" id="overview-view" data-page-view="overview">
+      <!-- Overview View -->
+      <section class="page-view" id="overview-view" data-page-view="overview">
         <section class="page-intro">
           <div>
-            <div class="eyebrow"><span class="eyebrow-line"></span><span id="today-label">YOUR WORKSPACE</span></div>
-            <h1>Good work starts<br class="mobile-break"> <em>with a clear view.</em></h1>
-            <p class="intro-copy">A little perspective on everything moving forward.</p>
+            <div class="eyebrow"><span class="eyebrow-line"></span><span id="today-label">WORKSPACE DASHBOARD</span></div>
+            <h1>Engineering <em>Command Center</em></h1>
+            <p class="intro-copy">Real-time metrics, active initiatives, and priority task queues.</p>
           </div>
           <div class="intro-actions">
-            <button class="button button-secondary" type="button" id="open-task-modal"><span class="plus-symbol">+</span> Add task</button>
-            <button class="button button-primary" type="button" id="open-project-modal"><span class="plus-symbol">+</span> New project</button>
+            <button class="button button-secondary" type="button" id="open-task-modal">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New Task
+            </button>
+            <button class="button button-primary" type="button" id="open-project-modal">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New Project
+            </button>
           </div>
         </section>
 
-        <section class="metrics" aria-label="Workspace summary">
-          <article class="metric metric-projects">
-            <div class="metric-top"><span>ACTIVE PROJECTS</span><span class="metric-symbol symbol-green"></span></div>
-            <div class="metric-number" id="metric-projects">0</div>
-            <div class="metric-foot"><span class="metric-dot green-dot"></span><span id="metric-project-caption">Ready to get moving</span></div>
+        <!-- Bento Metrics Grid -->
+        <section class="metrics-bento" aria-label="Workspace summary">
+          <article class="bento-metric clickable-metric" data-metric-filter="active">
+            <div class="metric-header">
+              <span>ACTIVE PROJECTS</span>
+              <span class="badge-icon cyan">⚡</span>
+            </div>
+            <div class="metric-value" id="metric-projects">0</div>
+            <div class="metric-footer" id="metric-project-caption">Ready to deploy</div>
           </article>
-          <article class="metric metric-open">
-            <div class="metric-top"><span>OPEN TASKS</span><span class="metric-symbol symbol-coral"></span></div>
-            <div class="metric-number" id="metric-open">0</div>
-            <div class="metric-foot"><span class="metric-dot coral-dot"></span><span>Across all projects</span></div>
+          <article class="bento-metric clickable-metric" data-metric-filter="due_soon">
+            <div class="metric-header">
+              <span>DUE SOON</span>
+              <span class="badge-icon blue">⏳</span>
+            </div>
+            <div class="metric-value" id="metric-due-soon">0</div>
+            <div class="metric-footer">Due in 7 days</div>
           </article>
-          <article class="metric metric-done">
-            <div class="metric-top"><span>COMPLETED</span><span class="metric-symbol symbol-yellow"></span></div>
-            <div class="metric-number" id="metric-done">0</div>
-            <div class="metric-foot"><span class="metric-dot yellow-dot"></span><span>One step at a time</span></div>
+          <article class="bento-metric clickable-metric" data-metric-filter="blocked">
+            <div class="metric-header">
+              <span>BLOCKED ITEMS</span>
+              <span class="badge-icon coral">⚠️</span>
+            </div>
+            <div class="metric-value" id="metric-blocked">0</div>
+            <div class="metric-footer">Requires unblocking</div>
           </article>
-          <article class="metric metric-blocked">
-            <div class="metric-top"><span>NEEDS ATTENTION</span><span class="metric-symbol symbol-lilac"></span></div>
-            <div class="metric-number" id="metric-blocked">0</div>
-            <div class="metric-foot"><span class="metric-dot lilac-dot"></span><span>Blocked tasks</span></div>
+          <article class="bento-metric clickable-metric" data-metric-filter="done">
+            <div class="metric-header">
+              <span>RECENTLY COMPLETED</span>
+              <span class="badge-icon green">✨</span>
+            </div>
+            <div class="metric-value" id="metric-done">0</div>
+            <div class="metric-footer">Shipped successfully</div>
           </article>
         </section>
 
-        <div class="content-grid">
+        <!-- Bento Content Grid -->
+        <div class="bento-grid">
           <section class="panel project-panel" id="projects-preview">
             <div class="panel-heading">
               <div>
-                <div class="section-kicker">THE BIG PICTURE</div>
-                <h2>Projects <span class="heading-count" id="project-heading-count">0</span></h2>
+                <div class="section-kicker">PORTFOLIO</div>
+                <h2>Active Projects <span class="heading-count" id="project-heading-count">0</span></h2>
               </div>
-              <button class="text-button" type="button" data-navigate-view="projects">View all <span aria-hidden="true">↗</span></button>
-            </div>
-            <div class="filter-row preview-filters" role="group" aria-label="Filter projects">
-              <button class="filter-chip selected" type="button" data-project-filter="all">All projects</button>
-              <button class="filter-chip" type="button" data-project-filter="active">In progress</button>
-              <button class="filter-chip" type="button" data-project-filter="planned">Planned</button>
+              <button class="text-button" type="button" data-navigate-view="projects">View all <span>→</span></button>
             </div>
             <div class="project-list" id="project-preview-list" data-list-view="overview" aria-live="polite"></div>
           </section>
 
           <section class="panel focus-panel" id="tasks-preview">
-            <div class="panel-heading focus-heading">
+            <div class="panel-heading">
               <div>
-                <div class="section-kicker">KEEP THE MOMENTUM</div>
-                <h2>Up next <span class="heading-count" id="task-heading-count">0</span></h2>
+                <div class="section-kicker">QUEUE</div>
+                <h2>Priority Tasks <span class="heading-count" id="task-heading-count">0</span></h2>
               </div>
-              <div class="heading-actions"><button class="text-button" type="button" data-navigate-view="tasks">View all <span aria-hidden="true">↗</span></button><button class="round-add" type="button" id="open-task-quick" aria-label="Add a task" title="Add a task">+</button></div>
+              <div class="heading-actions">
+                <button class="text-button" type="button" data-navigate-view="tasks">View all <span>→</span></button>
+                <button class="round-add" type="button" id="open-task-quick" title="Add task">+</button>
+              </div>
             </div>
-            <div class="task-filters" role="group" aria-label="Filter tasks">
-              <button class="task-filter selected" type="button" data-task-filter="all">All</button>
-              <button class="task-filter" type="button" data-task-filter="urgent">Priority</button>
+            <div class="task-filters" role="group">
+              <button class="task-filter selected" type="button" data-task-filter="all">Open</button>
+              <button class="task-filter" type="button" data-task-filter="urgent">Urgent</button>
               <button class="task-filter" type="button" data-task-filter="blocked">Blocked</button>
               <button class="task-filter" type="button" data-task-filter="done">Done</button>
               <button class="task-filter" type="button" data-task-filter="cancelled">Cancelled</button>
             </div>
             <div class="task-list" id="task-preview-list" data-list-view="overview" aria-live="polite"></div>
-            <div class="task-list-footer"><span id="task-footer-copy">Your next steps, all in one place.</span><span class="footer-spark" aria-hidden="true">✳</span></div>
           </section>
         </div>
-        </section>
+      </section>
 
-        <section class="page-view" id="projects-view" data-page-view="projects" hidden>
-          <section class="page-intro dedicated-intro">
-            <div><div class="eyebrow"><span class="eyebrow-line"></span>WORKSPACE</div><h1>Projects</h1><p class="intro-copy">Every initiative, with its progress and next steps.</p></div>
-            <button class="button button-primary" type="button" data-open-project><span class="plus-symbol">+</span> New project</button>
-          </section>
-          <section class="panel project-panel full-list-panel">
-            <div class="panel-heading"><div><div class="section-kicker">YOUR PORTFOLIO</div><h2>All projects <span class="heading-count" id="project-page-count">0</span></h2></div></div>
-            <div class="filter-row" role="group" aria-label="Filter projects">
-              <button class="filter-chip selected" type="button" data-project-filter="all">All projects</button>
-              <button class="filter-chip" type="button" data-project-filter="active">In progress</button>
-              <button class="filter-chip" type="button" data-project-filter="planned">Planned</button>
-            </div>
-            <div class="project-list" id="project-list" data-list-view="projects" aria-live="polite"></div>
-          </section>
+      <!-- Projects View -->
+      <section class="page-view" id="projects-view" data-page-view="projects" hidden>
+        <section class="page-intro dedicated-intro">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span>PORTFOLIO</div>
+            <h1>All Projects</h1>
+            <p class="intro-copy">Manage initiatives, track milestone progress, and coordinate ownership.</p>
+          </div>
+          <button class="button button-primary" type="button" data-open-project>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            New Project
+          </button>
         </section>
-
-        <section class="page-view" id="tasks-view" data-page-view="tasks" hidden>
-          <section class="page-intro dedicated-intro">
-            <div><div class="eyebrow"><span class="eyebrow-line"></span>YOUR WORK</div><h1>My tasks</h1><p class="intro-copy">Keep the next steps moving, one task at a time.</p></div>
-            <button class="button button-primary" type="button" id="tasks-page-add"><span class="plus-symbol">+</span> Add task</button>
-          </section>
-          <section class="panel focus-panel full-list-panel">
-            <div class="panel-heading focus-heading"><div><div class="section-kicker">TASK LIST</div><h2>All tasks <span class="heading-count" id="task-page-count">0</span></h2></div></div>
-            <div class="task-filters" role="group" aria-label="Filter tasks">
-              <button class="task-filter selected" type="button" data-task-filter="all">Open</button>
-              <button class="task-filter" type="button" data-task-filter="urgent">Priority</button>
-              <button class="task-filter" type="button" data-task-filter="blocked">Blocked</button>
-              <button class="task-filter" type="button" data-task-filter="done">Done</button>
-              <button class="task-filter" type="button" data-task-filter="cancelled">Cancelled</button>
-            </div>
-            <div class="task-list" id="task-list" data-list-view="tasks" aria-live="polite"></div>
-            <div class="task-list-footer"><span id="task-page-footer-copy">Your next steps, all in one place.</span><span class="footer-spark" aria-hidden="true">✳</span></div>
-          </section>
+        <section class="panel project-panel full-list-panel">
+          <div class="panel-heading">
+            <div><div class="section-kicker">INITIATIVES</div><h2>Project Directory <span class="heading-count" id="project-page-count">0</span></h2></div>
+          </div>
+          <div class="filter-row" role="group">
+            <button class="filter-chip selected" type="button" data-project-filter="all">All Projects</button>
+            <button class="filter-chip" type="button" data-project-filter="active">Active</button>
+            <button class="filter-chip" type="button" data-project-filter="planned">Planned</button>
+            <button class="filter-chip" type="button" data-project-filter="on_hold">On hold</button>
+          </div>
+          <div class="project-list" id="project-list" data-list-view="projects" aria-live="polite"></div>
         </section>
+      </section>
 
-        <footer class="page-footer"><span>STUDIO NORTH</span><span>Make room for good work.</span></footer>
-      </div>
+      <!-- Tasks View -->
+      <section class="page-view" id="tasks-view" data-page-view="tasks" hidden>
+        <section class="page-intro dedicated-intro">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span>TASK QUEUE</div>
+            <h1>My Tasks</h1>
+            <p class="intro-copy">Execution backlog across all active workspace projects.</p>
+          </div>
+          <button class="button button-primary" type="button" id="tasks-page-add">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Task
+          </button>
+        </section>
+        <section class="panel focus-panel full-list-panel">
+          <div class="panel-heading">
+            <div><div class="section-kicker">BACKLOG</div><h2>Task List <span class="heading-count" id="task-page-count">0</span></h2></div>
+          </div>
+          <div class="task-filters" role="group">
+            <button class="task-filter selected" type="button" data-task-filter="all">Open</button>
+            <button class="task-filter" type="button" data-task-filter="urgent">Urgent</button>
+            <button class="task-filter" type="button" data-task-filter="blocked">Blocked</button>
+            <button class="task-filter" type="button" data-task-filter="done">Done</button>
+            <button class="task-filter" type="button" data-task-filter="cancelled">Cancelled</button>
+          </div>
+          <div class="task-list" id="task-list" data-list-view="tasks" aria-live="polite"></div>
+        </section>
+      </section>
+
+      <footer class="page-footer">
+        <span>STUDIO WORKSPACE v2.5</span>
+        <span>High-Performance Engineering Hub</span>
+      </footer>
     </main>
   </div>
 
+  <!-- Dialogs -->
   <dialog class="form-dialog" id="project-dialog" aria-labelledby="project-dialog-title">
     <form id="project-form">
-      <div class="dialog-topline"><span>START SOMETHING NEW</span><button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button></div>
+      <div class="dialog-topline"><span>PROJECT CONFIG</span><button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button></div>
       <h2 id="project-dialog-title">New project</h2>
-      <p class="dialog-description">Give your next piece of work a home.</p>
-      <label class="field-label" for="project-name">Project name <span>*</span></label>
-      <input class="form-input" id="project-name" name="name" required maxlength="120" placeholder="e.g. Spring launch">
-      <label class="field-label" for="project-description">A few details</label>
-      <textarea class="form-input form-textarea" id="project-description" name="description" rows="3" placeholder="What does success look like?"></textarea>
+      <p class="dialog-description">Configure initiative parameters and targets.</p>
+      <label class="field-label" for="project-name">Project Name <span>*</span></label>
+      <input class="form-input" id="project-name" name="name" required maxlength="120" placeholder="e.g. Core API V2">
+      <label class="field-label" for="project-description">Description</label>
+      <textarea class="form-input form-textarea" id="project-description" name="description" rows="3" placeholder="Objective and scope..."></textarea>
       <div class="field-pair">
-        <div><label class="field-label" for="project-status">Status</label><select class="form-input" id="project-status" name="status"><option value="active">In progress</option><option value="planned">Planned</option><option value="on_hold">On hold</option><option value="completed">Completed</option><option value="archived">Archived</option></select></div>
-        <div><label class="field-label" for="project-due">Target date</label><input class="form-input" id="project-due" name="due_date" type="date"></div>
+        <div><label class="field-label" for="project-status">Status</label><select class="form-input" id="project-status" name="status"><option value="active">Active</option><option value="planned">Planned</option><option value="on_hold">On hold</option><option value="completed">Completed</option><option value="archived">Archived</option></select></div>
+        <div><label class="field-label" for="project-due">Target Due Date</label><input class="form-input" id="project-due" name="due_date" type="date"></div>
       </div>
       <div class="dialog-error" id="project-error" role="alert"></div>
-      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-dialog>Cancel</button><button class="button button-primary" type="submit">Create project</button></div>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-dialog>Cancel</button><button class="button button-primary" type="submit">Save Project</button></div>
     </form>
   </dialog>
 
   <dialog class="form-dialog" id="task-dialog" aria-labelledby="task-dialog-title">
     <form id="task-form">
-      <div class="dialog-topline"><span>MAKE IT ACTIONABLE</span><button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button></div>
+      <div class="dialog-topline"><span>TASK CONFIG</span><button class="dialog-close" type="button" data-close-dialog aria-label="Close">×</button></div>
       <h2 id="task-dialog-title">Add a task</h2>
-      <p class="dialog-description">A clear next step is a good start.</p>
-      <label class="field-label" for="task-title">Task <span>*</span></label>
-      <input class="form-input" id="task-title" name="title" required maxlength="180" placeholder="What needs to get done?">
+      <p class="dialog-description">Create an actionable item in the queue.</p>
+      <label class="field-label" for="task-title">Task Title <span>*</span></label>
+      <input class="form-input" id="task-title" name="title" required maxlength="180" placeholder="What needs to be done?">
       <div class="field-pair">
         <div><label class="field-label" for="task-project">Project <span>*</span></label><select class="form-input" id="task-project" name="project_id" required></select></div>
         <div><label class="field-label" for="task-priority">Priority</label><select class="form-input" id="task-priority" name="priority"><option value="medium">Medium</option><option value="urgent">Urgent</option><option value="high">High</option><option value="low">Low</option></select></div>
       </div>
       <label class="field-label" for="task-status">Status</label>
-      <select class="form-input" id="task-status" name="status"><option value="todo">To do</option><option value="backlog">Backlog</option><option value="in_progress">In progress</option><option value="blocked">Blocked</option><option value="done">Done</option><option value="cancelled">Cancelled</option></select>
+      <select class="form-input" id="task-status" name="status"><option value="todo">To Do</option><option value="backlog">Backlog</option><option value="in_progress">In Progress</option><option value="blocked">Blocked</option><option value="done">Done</option><option value="cancelled">Cancelled</option></select>
       <div class="field-pair">
-        <div><label class="field-label" for="task-assignee">Assign to</label><select class="form-input" id="task-assignee" name="assignee_id"></select></div>
-        <div><label class="field-label" for="task-due">Due date</label><input class="form-input" id="task-due" name="due_date" type="date"></div>
+        <div><label class="field-label" for="task-assignee">Assignee</label><select class="form-input" id="task-assignee" name="assignee_id"></select></div>
+        <div><label class="field-label" for="task-due">Due Date</label><input class="form-input" id="task-due" name="due_date" type="date"></div>
       </div>
       <label class="field-label" for="task-description">Details</label>
-      <textarea class="form-input form-textarea" id="task-description" name="description" rows="2" placeholder="Add a little context"></textarea>
+      <textarea class="form-input form-textarea" id="task-description" name="description" rows="2" placeholder="Technical specs or context"></textarea>
       <div class="dialog-error" id="task-error" role="alert"></div>
-      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-dialog>Cancel</button><button class="button button-primary" type="submit">Add task</button></div>
+      <div class="dialog-actions"><button class="button button-secondary" type="button" data-close-dialog>Cancel</button><button class="button button-primary" type="submit">Save Task</button></div>
     </form>
   </dialog>
 
