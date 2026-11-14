@@ -13,7 +13,6 @@ A lightweight project-management app for organizing projects and their next step
 - Filter and search projects and tasks, including done and cancelled tasks.
 - Track task counts, completed work, and blocked work.
 - Save data locally in SQLite across restarts.
-- The database schema includes tables for members, milestones, dependencies, labels, comments, time entries, attachments, and activity records. These records do not currently have management screens or API routes.
 
 ## Requirements
 
@@ -38,11 +37,7 @@ On Windows, if `python` is not on your PATH, use the Python launcher instead:
 py app.py
 ```
 
-The server creates `project_management.db` in the project directory on first run. This database is intentionally ignored by Git so your local workspace data is not uploaded. `project.py` contains the schema and can also be run directly to initialize the database:
-
-```powershell
-python project.py
-```
+The server creates `project_management.db` in the project directory on first run. This database is intentionally ignored by Git so your local workspace data is not uploaded.
 
 ## Configuration
 
@@ -60,25 +55,27 @@ python app.py
 ```text
 .
 ├── app.py                 # Application entry point
-├── http_handler.py        # HTTP routes and JSON/static responses
-├── workspace_service.py   # Workspace queries and project/task operations
-├── project.py             # SQLite schema and connection helpers
+├── backend/
+│   ├── project.py         # SQLite schema and connection helpers
+│   ├── workspace_service.py # Workspace queries and project/task operations
+│   └── http_handler.py    # HTTP routing and response handling
 ├── static/
-│   ├── app.js             # Browser app entry point
-│   ├── api.js             # JSON request helper
-│   ├── events.js          # UI event handlers
-│   ├── render.js          # Metrics, lists, and form options
-│   ├── ui.js              # Dialogs, navigation, theme, and toasts
-│   ├── utils.js           # Shared display helpers
+│   ├── js/
+│   │   ├── app.js         # Browser app entry point
+│   │   ├── api.js         # JSON request helper
+│   │   ├── events.js      # UI event handlers
+│   │   ├── render.js      # Metrics, lists, and form options
+│   │   ├── ui.js          # Dialogs, navigation, theme, and toasts
+│   │   └── utils.js       # Shared display helpers
 │   ├── index.html         # App page
-│   └── styles.css         # Responsive and theme styles
+│   └── styles.css         # Responsive design system & micro-interactions
 ├── README.md
 └── .gitignore
 ```
 
 ## API
 
-- `GET /api/overview` returns all projects, tasks of every status, workspace counts, and active members. Tasks are ordered with open work first; including completed and cancelled tasks supports those filters in the browser.
+- `GET /api/overview` returns all projects, tasks of every status, workspace counts, and active members.
 - `POST /api/projects` creates a project.
 - `POST /api/tasks` creates a task.
 - `PATCH /api/tasks/{id}` updates a task's title, description, project, status, priority, assignee, or due date.
