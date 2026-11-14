@@ -10,6 +10,7 @@ const elements = {
   projectLists: document.querySelectorAll(".project-list"),
   taskLists: document.querySelectorAll(".task-list"),
   search: document.querySelector("#global-search"),
+  workspaceError: document.querySelector("#workspace-error"),
   projectDialog: document.querySelector("#project-dialog"),
   taskDialog: document.querySelector("#task-dialog"),
   projectForm: document.querySelector("#project-form"),
@@ -40,13 +41,24 @@ function render() {
   updateTaskFormOptions(state.workspace);
 }
 
+// Show skeleton loading placeholders
+function showLoadingSkeletons() {
+  const skeletonRow = `<div class="loading-row" style="animation: pulse-soft 1.5s ease-in-out infinite;">
+    <span style="color: var(--subtle); font-size: 12px;">Loading workspace…</span>
+  </div>`;
+  elements.projectLists.forEach((list) => { list.innerHTML = skeletonRow; });
+  elements.taskLists.forEach((list) => { list.innerHTML = skeletonRow; });
+}
+
 async function loadWorkspace() {
   try {
     state.workspace = await request("/api/overview");
+    elements.workspaceError.hidden = true;
+    elements.workspaceError.textContent = "";
     render();
   } catch (error) {
-    elements.projects.innerHTML = `<div class="loading-row error-state">${escapeHtml(error.message)} Refresh the page to try again.</div>`;
-    elements.tasks.innerHTML = "";
+    elements.workspaceError.textContent = `${error.message} Refresh the page to try again.`;
+    elements.workspaceError.hidden = false;
   }
 }
 
@@ -79,4 +91,5 @@ document.querySelector("#today-label").textContent = new Intl.DateTimeFormat(und
   day: "numeric",
 }).format(new Date()).toUpperCase();
 showView(location.hash.slice(1) || "overview", false);
+showLoadingSkeletons();
 loadWorkspace();

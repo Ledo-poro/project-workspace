@@ -1,7 +1,26 @@
 import { escapeHtml, formattedDate, statusLabel } from "./utils.js";
 
-const PROJECT_COLORS = ["#789779", "#d68b73", "#d0a34d", "#8c83ad", "#5f91a0"];
+const PROJECT_COLORS = ["#34d399", "#38bdf8", "#fbbf24", "#c084fc", "#fb7185", "#2dd4bf", "#818cf8"];
 const COMPLETED_TASK_STATUSES = ["done", "cancelled"];
+
+function animateCounters() {
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll(".metric-number").forEach((el) => {
+    const target = parseInt(el.textContent, 10) || 0;
+    if (prefersReducedMotion || target === 0) return;
+    const duration = 600;
+    const start = performance.now();
+    const from = 0;
+    function step(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(from + (target - from) * eased);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}
 
 export function renderMetrics(workspace) {
   const activeProjects = workspace.projects.filter((item) => item.status === "active").length;
@@ -10,26 +29,27 @@ export function renderMetrics(workspace) {
   document.querySelector("#metric-done").textContent = workspace.counts.completed_tasks || 0;
   document.querySelector("#metric-blocked").textContent = workspace.counts.blocked_tasks || 0;
   document.querySelector("#metric-project-caption").textContent = activeProjects
-    ? `${workspace.projects.length} total in your workspace`
-    : "Ready to get moving";
+    ? `${workspace.projects.length} total in workspace`
+    : "Ready to deploy";
   document.querySelector("#project-heading-count").textContent = workspace.projects.length;
   document.querySelector("#task-heading-count").textContent = workspace.counts.open_tasks || 0;
   document.querySelector("#project-page-count").textContent = workspace.projects.length;
   document.querySelector("#task-page-count").textContent = workspace.tasks.length;
   document.querySelector("#nav-project-count").textContent = workspace.projects.length;
   document.querySelector("#nav-task-count").textContent = workspace.counts.open_tasks || 0;
+
+  requestAnimationFrame(() => animateCounters());
 }
 
 function projectEmptyState(hasProjects) {
-  const icon = hasProjects ? "⌕" : "+";
-  const title = hasProjects ? "Nothing in this view" : "Your first project starts here";
+  const title = hasProjects ? "No projects in this view" : "Start your first project";
   const description = hasProjects
-    ? "Try another filter or a different search."
-    : "Create a home for your team's next idea, launch, or big move.";
+    ? "Try clearing filters or search queries."
+    : "Create a home for your next initiative, app, or release.";
   const action = hasProjects
     ? ""
-    : '<button class="button button-secondary" type="button" data-open-project>Create a project</button>';
-  return `<div class="empty-state"><span class="empty-icon">${icon}</span><strong>${title}</strong><p>${description}</p>${action}</div>`;
+    : '<button class="button button-primary" type="button" data-open-project>Create Project</button>';
+  return `<div class="empty-state"><span class="empty-icon">📂</span><strong>${title}</strong><p>${description}</p>${action}</div>`;
 }
 
 function projectRow(item, index) {
@@ -37,12 +57,21 @@ function projectRow(item, index) {
     ? Math.round(item.completed_count / item.task_count * 100)
     : 0;
   const taskLabel = item.task_count === 1 ? "task" : "tasks";
-  return `<article class="project-row" style="--project-color:${PROJECT_COLORS[index % PROJECT_COLORS.length]};animation-delay:${index * 45}ms">
+  return `<article class="project-row" style="--project-color:${PROJECT_COLORS[index % PROJECT_COLORS.length]}">
       <div class="project-name-wrap"><span class="project-color"></span><span class="project-meta"><strong>${escapeHtml(item.name)}</strong><small>${item.task_count} ${taskLabel} · ${escapeHtml(item.owner_name || "Workspace")}</small></span></div>
       <div><div class="progress-copy"><span>Progress</span><strong>${progress}%</strong></div><div class="progress-track"><div class="progress-fill" style="width:${progress}%"></div></div></div>
       <span class="project-status ${escapeHtml(item.status)}">${escapeHtml(statusLabel(item.status))}</span>
       <span class="project-due">${escapeHtml(formattedDate(item.due_date))}</span>
-      <div class="row-actions"><button class="row-action edit-icon" type="button" data-edit-project="${item.id}" aria-label="Edit project ${escapeHtml(item.name)}" title="Edit project"></button><button class="row-action delete-icon" type="button" data-delete-project="${item.id}" aria-label="Delete project ${escapeHtml(item.name)}" title="Delete project"></button></div>
+      <div class="row-actions">
+        <button class="row-action-btn edit-btn" type="button" data-edit-project="${item.id}" title="Edit project">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit
+        </button>
+        <button class="row-action-btn delete-btn" type="button" data-delete-project="${item.id}" title="Delete project">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Delete
+        </button>
+      </div>
     </article>`;
 }
 
@@ -70,15 +99,14 @@ export function renderProjects(workspace, projectFilter, search, projectLists) {
 }
 
 function taskEmptyState(hasProjects) {
-  const icon = hasProjects ? "✓" : "↗";
-  const title = hasProjects ? "A little breathing room" : "No tasks on the board yet";
+  const title = hasProjects ? "All caught up" : "No tasks in the queue";
   const description = hasProjects
-    ? "Add a task when there's a next step to take."
-    : "Create a project first, then break the work into clear next steps.";
+    ? "No tasks match your current filter."
+    : "Create a project and add tasks to get moving.";
   const action = hasProjects
-    ? '<button class="button button-secondary" type="button" data-open-task>Add a task</button>'
+    ? '<button class="button button-secondary" type="button" data-open-task>Add Task</button>'
     : "";
-  return `<div class="empty-state"><span class="empty-icon">${icon}</span><strong>${title}</strong><p>${description}</p>${action}</div>`;
+  return `<div class="empty-state"><span class="empty-icon">✨</span><strong>${title}</strong><p>${description}</p>${action}</div>`;
 }
 
 function taskRow(task, index, today) {
@@ -89,10 +117,23 @@ function taskRow(task, index, today) {
     : "–";
   const priority = task.priority[0].toUpperCase() + task.priority.slice(1);
   const dueLabel = due ? `${overdue ? "Late · " : "Due "}${escapeHtml(formattedDate(task.due_date))}` : "";
-  return `<article class="task-row" style="animation-delay:${index * 35}ms">
-      <button class="task-check" type="button" data-complete-task="${task.id}" aria-label="Mark ${escapeHtml(task.title)} complete" title="Mark complete"></button>
-      <div class="task-copy"><strong class="task-title" title="${escapeHtml(task.title)}">${escapeHtml(task.title)}</strong><div class="task-meta"><span class="task-project">${escapeHtml(task.project_name)}</span><span class="task-meta-sep"></span><span class="task-priority ${escapeHtml(task.priority)}"><i class="priority-mark"></i>${escapeHtml(priority)}</span></div></div>
-      <div class="task-side"><span class="task-date ${overdue ? "overdue" : ""}">${dueLabel}</span><span class="task-assignee ${task.assignee_name ? "" : "unassigned"}" title="${escapeHtml(task.assignee_name || "Unassigned")}">${escapeHtml(initials)}</span><div class="row-actions"><button class="row-action edit-icon" type="button" data-edit-task="${task.id}" aria-label="Edit task ${escapeHtml(task.title)}" title="Edit task"></button><button class="row-action delete-icon" type="button" data-delete-task="${task.id}" aria-label="Delete task ${escapeHtml(task.title)}" title="Delete task"></button></div></div>
+  return `<article class="task-row">
+      <button class="task-check" type="button" data-complete-task="${task.id}" aria-label="Mark complete" title="Mark complete"></button>
+      <div class="task-copy"><strong class="task-title" title="${escapeHtml(task.title)}">${escapeHtml(task.title)}</strong><div class="task-meta"><span class="task-project">${escapeHtml(task.project_name)}</span><span>·</span><span class="task-priority ${escapeHtml(task.priority)}">${escapeHtml(priority)}</span></div></div>
+      <div class="task-side">
+        <span class="task-date ${overdue ? "overdue" : ""}">${dueLabel}</span>
+        <span class="task-assignee" title="${escapeHtml(task.assignee_name || "Unassigned")}">${escapeHtml(initials)}</span>
+      </div>
+      <div class="row-actions">
+        <button class="row-action-btn edit-btn" type="button" data-edit-task="${task.id}" title="Edit task">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          Edit
+        </button>
+        <button class="row-action-btn delete-btn" type="button" data-delete-task="${task.id}" title="Delete task">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Delete
+        </button>
+      </div>
     </article>`;
 }
 
